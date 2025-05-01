@@ -1,0 +1,83 @@
+# This workflow runs only for PRs raised by dependabot.
+# The reason why this needs to be a standalone workflow is because GitHub prohibits dependabot PRs to access GitHub secrets.
+# Since our CI workflow deals with GitHub secrets for image push to ECR, we cannot have dependabot workflow inside CI workflow.
+
+name: Dependabot PR auto merge workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      # working-directory is added to accommodate monorepo.  For multi repo, defaults to '.', current directory
+      working-directory:
+        required: false
+        type: string
+        default: './functions-java'
+      java-version:
+        required: false
+        type: string
+        default: '17'
+
+#  push:
+#    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
+#    paths: ['functions-java/**']
+
+jobs:
+
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write # need this for OIDC
+      contents: write
+
+    # run this workflow only for dependabot
+    if: ${{ github.actor == 'dependabot[bot]'}}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup jdk
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Print debug info
+        run: |
+          echo working-directory: ${{ inputs.working-directory }}
+          echo java-version: ${{ inputs.java-version }}
+
+      - name: Build with Maven
+        run: mvn clean install --file ${{ inputs.working-directory }}/pom.xml
+
+  automerge:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+
+    # run this workflow only for dependabot
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            nodejs.org:443
+
+      - uses: fastify/github-action-merge-dependabot@v3
+        with:
+          # it is an automatically generated secret that lets you make authenticated calls to the GitHub APIs.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
