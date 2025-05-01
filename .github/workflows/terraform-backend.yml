@@ -57,7 +57,7 @@ jobs:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
 
       - name: Checkout
-        uses: actions/checkout@v3     
+        uses: actions/checkout@v4     
 
       - name: Print debug info
         run: |
@@ -129,7 +129,7 @@ jobs:
           egress-policy: audit
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
