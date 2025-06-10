@@ -1,31 +1,23 @@
 {
   "name": "tams-frontend-application",
-  "services": [
+  "region": "blr",
+  "static_sites": [
     {
-      "name": "tams-frontend",
+      "name": "tams-frontend-static",
       "github": {
+        "repo": "DomsApplication/tams-frontend",
         "branch": "main",
-        "deploy_on_push": true,
-        "repo": "DomsApplication/tams-frontend"
+        "deploy_on_push": true
       },
       "source_dir": "frontend",
+      "output_dir": "build",
       "build_command": "npm install && npm run build",
-      "run_command": "",
-      "envs": [],
       "routes": [
         {
           "path": "/"
         }
       ],
-      "static_sites": [
-        {
-          "name": "tams-frontend-static",
-          "source_dir": "frontend",
-          "output_dir": "build",
-          "routes": [{ "path": "/" }]
-        }
-      ]
+      "environment_slug": "node-js"
     }
-  ],
-  "region": "blr"
+  ]
 }
