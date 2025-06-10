@@ -26,7 +26,7 @@ jobs:
 
       - name: Deploy to App Platform
         run: |
-          echo "Checking if app 'tams-frontend-application' exists..."
+          echo "Checking ifff app 'tams-frontend-application' exists..."
           APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep tams-frontend-application | awk '{print $1}')
 
           if [ -z "$APP_ID" ]; then
