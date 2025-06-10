@@ -1,26 +1,31 @@
 {
-  "name": "tams-frontend",
+  "name": "tams-frontend-application",
   "services": [
     {
-      "name": "frontend",
+      "name": "tams-frontend",
       "github": {
-        "repo": "your-github-username/your-repo-name",
         "branch": "main",
-        "deploy_on_push": true
+        "deploy_on_push": true,
+        "repo": "DomsApplication/tams-frontend"
       },
-      "static_sites": [
+      "source_dir": "frontend",
+      "build_command": "npm install && npm run build",
+      "run_command": "",
+      "envs": [],
+      "routes": [
         {
-          "name": "frontend-static-site",
-          "build_command": "npm run build",
-          "output_dir": "build",
-          "source_dir": "frontend"
+          "path": "/"
         }
       ],
-      "instance_size_slug": "basic-xxs",
-      "instance_count": 1,
-      "envs": []
+      "static_sites": [
+        {
+          "name": "tams-frontend-static",
+          "source_dir": "frontend",
+          "output_dir": "build",
+          "routes": [{ "path": "/" }]
+        }
+      ]
     }
   ],
-  "region": "nyc",
-  "project_id": "your-project-id"
+  "region": "blr"
 }
