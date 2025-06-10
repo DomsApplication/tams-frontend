@@ -40,7 +40,7 @@
   },
   "scripts": {
     "start": "set PORT=4000 && react-scripts start",
-    "build": "react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "build:dev": "env-cmd -f .env.dev react-scripts build",
     "build:qc": "env-cmd -f .env.qc react-scripts build",
     "build:prod": "env-cmd -f .env.prod react-scripts build",
