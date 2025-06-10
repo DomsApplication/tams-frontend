@@ -1,0 +1,110 @@
+name: DO App Platform - Frontend CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment selection"
+        required: true
+        type: environment
+        default: "dev"
+      working-directory:
+        description: "Working Directory"
+        required: true
+        type: string
+        default: './frontend'
+      node-version:
+        description: "Node.js Version"
+        required: true
+        type: string
+        default: '18'
+
+permissions:
+  contents: write
+
+jobs:
+  CI:
+    name: Build Frontend Static Site
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Setup Environment variables
+        id: vars
+        run: |
+          echo "environment=${{ inputs.environment || 'dev' }}" >> $GITHUB_OUTPUT
+          echo "working-directory=${{ inputs.working-directory || './frontend' }}" >> $GITHUB_OUTPUT
+          echo "node-version=${{ inputs.node-version || '18' }}" >> $GITHUB_OUTPUT
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ steps.vars.outputs.node-version }}
+
+      - name: Install dependencies
+        run: |
+          cd ${{ steps.vars.outputs.working-directory }}
+          npm ci
+
+      - name: Build React app
+        run: |
+          cd ${{ steps.vars.outputs.working-directory }}
+          npm run build
+
+      - name: Upload build artifacts for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: ${{ steps.vars.outputs.working-directory }}/build
+
+  CD:
+    name: Deploy Frontend to App Platform
+    runs-on: ubuntu-latest
+    needs: CI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: ./frontend/build
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          echo "Checking if app 'your-frontend-app-name' exists..."
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep your-frontend-app-name | awk '{print $1}')
+
+          if [ -z "$APP_ID" ]; then
+            echo "App does not exist. Creating new app..."
+            doctl apps create --spec .github/workflows/frontend-app-spec.json --format ID,DefaultIngress,Created --wait
+            APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep your-frontend-app-name | awk '{print $1}')
+            echo "Forcing RESTART to ensure latest deploy... $APP_ID"
+            doctl apps restart $APP_ID
+          else
+            echo "App exists. Updating app with spec..."
+            doctl apps update $APP_ID --spec .github/workflows/frontend-app-spec.json --format ID,DefaultIngress,Created --wait
+            echo "Forcing RESTART to reflect latest deploy... $APP_ID"
+            doctl apps restart $APP_ID
+          fi
+
+      - name: Assign app to project 'YourProjectName'
+        run: |
+          APP_ID=$(doctl apps list --format ID,Spec.Name --no-header | grep your-frontend-app-name | awk '{print $1}')
+          doctl projects resources assign YourProjectName --resource "do:app:$APP_ID"

@@ -1,0 +1,26 @@
+{
+  "name": "tams-frontend",
+  "services": [
+    {
+      "name": "frontend",
+      "github": {
+        "repo": "your-github-username/your-repo-name",
+        "branch": "main",
+        "deploy_on_push": true
+      },
+      "static_sites": [
+        {
+          "name": "frontend-static-site",
+          "build_command": "npm run build",
+          "output_dir": "build",
+          "source_dir": "frontend"
+        }
+      ],
+      "instance_size_slug": "basic-xxs",
+      "instance_count": 1,
+      "envs": []
+    }
+  ],
+  "region": "nyc",
+  "project_id": "your-project-id"
+}
