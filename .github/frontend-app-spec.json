@@ -11,8 +11,7 @@
       },
       "source_dir": "frontend",
       "build_command": "npm install && npm run build",
-      "run_command": "npx serve -s build",
-      "environment_slug": "node-js",
+      "environment_slug": "static",
       "routes": [
         {
           "path": "/"
