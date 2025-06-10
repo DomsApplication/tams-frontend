@@ -1,7 +1,7 @@
 {
   "name": "tams-frontend-application",
   "region": "blr",
-  "services": [
+  "static_sites": [
     {
       "name": "tams-frontend",
       "github": {
@@ -11,7 +11,7 @@
       },
       "source_dir": "frontend",
       "build_command": "npm install && npm run build",
-      "environment_slug": "static",
+      "output_dir": "build",
       "routes": [
         {
           "path": "/"
