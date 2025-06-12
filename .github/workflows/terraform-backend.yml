@@ -47,7 +47,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@446798f8213ac2e75931c1b0769676d927801858 # v2.10.0
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
         with:
           egress-policy: audit
 
@@ -124,7 +124,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@446798f8213ac2e75931c1b0769676d927801858 # v2.10.0
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
         with:
           egress-policy: audit
 
