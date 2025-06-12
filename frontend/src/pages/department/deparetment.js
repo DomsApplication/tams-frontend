@@ -56,7 +56,7 @@ const Department = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/department");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -141,7 +141,7 @@ const Department = () => {
         setOpenAddDialog(false);
         setLoading(true);
         const response = await axios.post(
-          "http://localhost:8999/api/department",
+          `${process.env.REACT_APP_API_BASE_URL}/department`,
           formData
         );
         setLoading(false);
@@ -186,7 +186,7 @@ const Department = () => {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:8999/api/department/${departmentId}`
+        `${process.env.REACT_APP_API_BASE_URL}/department/${departmentId}`
       );
       setLoading(false);
       if (response.status === 200) {

@@ -58,7 +58,7 @@ const UserAdd = () => {
   const fetchDepartmentList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/department");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -76,7 +76,7 @@ const UserAdd = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/device");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -136,7 +136,7 @@ const UserAdd = () => {
 
   const handleFormSubmit = async () => {
     if (validateForm()) {
-      fetch("http://localhost:8999/api/user/add", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/user/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

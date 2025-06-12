@@ -75,7 +75,7 @@ const UserEdit = () => {
   const fetchUserDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8999/api/user/${id}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/${id}`);
       setLoading(false);
       const inputdata = response.data;
       if (inputdata) {
@@ -121,7 +121,7 @@ const UserEdit = () => {
   const fetchDepartmentList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/department");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -139,7 +139,7 @@ const UserEdit = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/device");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -166,7 +166,7 @@ const UserEdit = () => {
   const fetchUserImage = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8999/api/user/${id}/photo`,
+        `${process.env.REACT_APP_API_BASE_URL}/user/${id}/photo`,
         {
           responseType: "arraybuffer", // To handle byte[] response
         }
@@ -189,7 +189,7 @@ const UserEdit = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8999/api/user/${id}/finger`
+        `${process.env.REACT_APP_API_BASE_URL}/user/${id}/finger`
       );
       const inputdata = response.data;
       setLoading(false);
@@ -237,7 +237,7 @@ const UserEdit = () => {
   const handleFormSubmit = async () => {
     if (validateForm()) {
       console.log("handleFormSubmit:::" + JSON.stringify(formData));
-      fetch("http://localhost:8999/api/user/add", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/user/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -360,7 +360,7 @@ const UserEdit = () => {
   const handleSyncFormSubmit = async () => {
     if (validateDeviceSyncForm()) {
       console.log("handleSyncFormSubmit:::" + JSON.stringify(devicesyncFormData));
-      fetch("http://localhost:8999/api/user/updateuserflag", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/user/updateuserflag`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

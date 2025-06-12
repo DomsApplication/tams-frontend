@@ -39,7 +39,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8999/api/dashboard/widgets"
+        `${process.env.REACT_APP_API_BASE_URL}/dashboard/widgets`
       );
       setLoading(false);
       const inputdata = response.data;
@@ -55,7 +55,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8999/api/dashboard/devicelog"
+        `${process.env.REACT_APP_API_BASE_URL}/dashboard/devicelog`
       );
       setLoading(false);
       const inputdata = response.data;
@@ -76,7 +76,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8999/api/dashboard/timelog"
+        `${process.env.REACT_APP_API_BASE_URL}/dashboard/timelog`
       );
       setLoading(false);
       const inputdata = response.data;

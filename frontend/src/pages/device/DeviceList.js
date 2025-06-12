@@ -28,7 +28,7 @@ const DeviceList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8999/api/device");
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
         const inputdata = response.data;
         if (inputdata.length > 0) {
           const keys = Object.keys(inputdata[0]);

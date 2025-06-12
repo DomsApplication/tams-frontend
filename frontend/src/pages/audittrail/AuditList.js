@@ -28,7 +28,7 @@ const AuditList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8999/api/audit");
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/audit`);
         const inputdata = response.data;
         if (inputdata.length > 0) {
           const keys = Object.keys(inputdata[0]);
