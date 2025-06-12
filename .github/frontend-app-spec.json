@@ -18,5 +18,14 @@
         }
       ]
     }
-  ]
+  ],
+  "domains" : [
+      {
+        "domain": "app.merav.co.in",
+        "type": "PRIMARY",
+        "wildcard": false,
+        "zone": "merav.co.in",
+        "minimum_tls_version": "1.3"
+      }
+    ]
 }
