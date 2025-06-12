@@ -90,7 +90,7 @@ const DeviceForm = ({ isEditMode }) => {
         timePeriod.includes("m") ? "minute" : "day"
       );
       const response = await axios.get(
-        `http://localhost:8999/api/device/${id}/logs`,
+        `${process.env.REACT_APP_API_BASE_URL}/device/${id}/logs`,
         { params: { start: start.toISOString(), end: end.toISOString() } }
       );
       setData(
@@ -109,7 +109,7 @@ const DeviceForm = ({ isEditMode }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8999/api/device/${id}`
+        `${process.env.REACT_APP_API_BASE_URL}/device/${id}`
       );
       setLoading(false);
       const inputdata = response.data;
@@ -131,7 +131,7 @@ const DeviceForm = ({ isEditMode }) => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/device");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -198,7 +198,7 @@ const DeviceForm = ({ isEditMode }) => {
 
   const handleSyncFormSubmit = async () => {
     console.log("handleSyncFormSubmit:::" + JSON.stringify(devicesyncFormData));
-    fetch("http://localhost:8999/api/device/updatedeviceflag", {
+    fetch("${process.env.REACT_APP_API_BASE_URL}/device/updatedeviceflag", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

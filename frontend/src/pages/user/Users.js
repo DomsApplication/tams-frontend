@@ -38,7 +38,7 @@ const Users = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8999/api/user");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user`);
       const inputdata = response.data;
       if (inputdata.length > 0) {
         const keys = Object.keys(inputdata[0]);
@@ -122,7 +122,7 @@ const Users = () => {
     try {
       setLoading(true);
       const response = await axios.delete(
-        `http://localhost:8999/api/user/${useId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/user/${useId}`,
         { data: { deleteFromDevices } } // Pass the toggle state
       );
       setLoading(false);

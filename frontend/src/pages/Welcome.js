@@ -48,7 +48,7 @@ function Welcome({ onLoginSuccess }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:8999/api/login/token",
+        `${process.env.REACT_APP_API_BASE_URL}/login/token`,
         { userId, password }
       );
       // Validate the response status

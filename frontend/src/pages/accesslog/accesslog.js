@@ -76,7 +76,7 @@ const AccessLog = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8999/api/device");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -126,7 +126,7 @@ const AccessLog = () => {
       }
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8999/api/access/timelog/${selecteddevice}`
+        `${process.env.REACT_APP_API_BASE_URL}/access/timelog/${selecteddevice}`
       );
       const inputdata = response.data;
       setLoading(false);
@@ -170,7 +170,7 @@ const AccessLog = () => {
       }
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8999/api/access/adminlog/${selecteddevice}`
+        `${process.env.REACT_APP_API_BASE_URL}/access/adminlog/${selecteddevice}`
       );
       const inputdata = response.data;
       setLoading(false);
