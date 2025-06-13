@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import useSnackbar from "../../component/snackbar/useSnackbar";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -75,7 +75,9 @@ const UserEdit = () => {
   const fetchUserDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/${id}`);
+      const response = await axiosInstance.get(
+        `/user/${id}`
+      );
       setLoading(false);
       const inputdata = response.data;
       if (inputdata) {
@@ -121,7 +123,9 @@ const UserEdit = () => {
   const fetchDepartmentList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
+      const response = await axiosInstance.get(
+        "/department"
+      );
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -139,7 +143,9 @@ const UserEdit = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
+      const response = await axiosInstance.get(
+        "/device"
+      );
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -165,8 +171,8 @@ const UserEdit = () => {
 
   const fetchUserImage = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/user/${id}/photo`,
+      const response = await axiosInstance.get(
+        `/user/${id}/photo`,
         {
           responseType: "arraybuffer", // To handle byte[] response
         }
@@ -188,8 +194,8 @@ const UserEdit = () => {
   const fetchUserFinger = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/user/${id}/finger`
+      const response = await axiosInstance.get(
+        `/user/${id}/finger`
       );
       const inputdata = response.data;
       setLoading(false);

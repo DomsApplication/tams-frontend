@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import useSnackbar from "../../component/snackbar/useSnackbar";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -58,7 +58,9 @@ const UserAdd = () => {
   const fetchDepartmentList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
+      const response = await axiosInstance.get(
+        "/department"
+      );
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -76,7 +78,9 @@ const UserAdd = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
+      const response = await axiosInstance.get(
+        "/device"
+      );
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {

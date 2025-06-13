@@ -16,8 +16,8 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import axios from "axios";
 import useSnackbar from "../../component/snackbar/useSnackbar";
+import axiosInstance from "../../utils/axiosInstance";
 
 const page_title = {
   title: "Access",
@@ -76,7 +76,9 @@ const AccessLog = () => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
+      const response = await axiosInstance.get(
+        "/device"
+      );
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
@@ -125,8 +127,8 @@ const AccessLog = () => {
         return;
       }
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/access/timelog/${selecteddevice}`
+      const response = await axiosInstance.get(
+        `/access/timelog/${selecteddevice}`
       );
       const inputdata = response.data;
       setLoading(false);
@@ -169,8 +171,8 @@ const AccessLog = () => {
         return;
       }
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/access/adminlog/${selecteddevice}`
+      const response = await axiosInstance.get(
+        `/access/adminlog/${selecteddevice}`
       );
       const inputdata = response.data;
       setLoading(false);

@@ -19,6 +19,8 @@ import Checkbox from "@mui/material/Checkbox";
 import Container from "@mui/material/Container";
 import PersonPinIcon from "@mui/icons-material/PersonPin";
 import Avatar from "@mui/material/Avatar";
+import axiosInstance from "../utils/axiosInstance";
+
 
 const toolbarStyle = {
   minHeight: "50px",
@@ -47,17 +49,17 @@ function Welcome({ onLoginSuccess }) {
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/login/token`,
-        { userId, password }
-      );
-      // Validate the response status
+      const request_body = {userId,password};
+      const response = await axiosInstance.post(
+          "/login/token", 
+          request_body
+        );
       if (response.status === 200) {
         const { message, token } = response.data;
         if (message === "success") {
           const decodedToken = Util.decodeJwt(token);
           const { exp } = decodedToken;
-          Util.setCookies(token, exp);
+          //Util.setCookies(token, exp);
           onLoginSuccess(decodedToken);
           setOpen(false);
         } else {
@@ -129,7 +131,7 @@ function Welcome({ onLoginSuccess }) {
                   required
                   fullWidth
                   id="userId"
-                  label="User Id"
+                  label="Email Id"
                   name="userId"
                   autoComplete="userId"
                   value={userId}
@@ -153,6 +155,8 @@ function Welcome({ onLoginSuccess }) {
                   </Typography>
                 )}
                 <Button
+                  variant="contained" 
+                  size="medium"
                   type="submit"
                   fullWidth
                   variant="contained"

@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const page_title = {
   title: "Audit List",
@@ -28,7 +28,9 @@ const AuditList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/audit`);
+        const response = await axiosInstance.get(
+          "/audit"
+        );
         const inputdata = response.data;
         if (inputdata.length > 0) {
           const keys = Object.keys(inputdata[0]);

@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import useSnackbar from "../../component/snackbar/useSnackbar";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -89,8 +89,8 @@ const DeviceForm = ({ isEditMode }) => {
         parseInt(timePeriod),
         timePeriod.includes("m") ? "minute" : "day"
       );
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/device/${id}/logs`,
+      const response = await axiosInstance.get(
+        `/device/${id}/logs`,
         { params: { start: start.toISOString(), end: end.toISOString() } }
       );
       setData(
@@ -108,8 +108,8 @@ const DeviceForm = ({ isEditMode }) => {
   const fetchDeviceInfoDetails = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/device/${id}`
+      const response = await axiosInstance.get(
+        `/device/${id}`
       );
       setLoading(false);
       const inputdata = response.data;
@@ -131,7 +131,9 @@ const DeviceForm = ({ isEditMode }) => {
   const fetchDeviceList = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/device`);
+      const response = await axiosInstance.get(
+        `/device`
+      );
       const inputdata = response.data;
       setLoading(false);
       if (inputdata.length > 0) {
