@@ -13,6 +13,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import axiosInstance from "../utils/axiosInstance";
 
 const page_title = {
   title: "Dashboard",
@@ -38,9 +39,10 @@ const Dashboard = () => {
   const fetchWidgetsData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/dashboard/widgets`
-      );
+
+      const response = await axiosInstance.get(
+          "/dashboard/widgets"
+        );
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -54,8 +56,8 @@ const Dashboard = () => {
   const fetchDevicelogData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/dashboard/devicelog`
+      const response = await axiosInstance.get(
+        "/dashboard/devicelog"
       );
       setLoading(false);
       const inputdata = response.data;
@@ -75,8 +77,8 @@ const Dashboard = () => {
   const fetchTimelogData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/dashboard/timelog`
+      const response = await axiosInstance.get(
+        "/dashboard/timelog"
       );
       setLoading(false);
       const inputdata = response.data;

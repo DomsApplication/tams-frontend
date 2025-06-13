@@ -16,7 +16,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import useSnackbar from "../../component/snackbar/useSnackbar";
 import AlertDialog from "../../component/alertdialog";
 
@@ -56,7 +56,9 @@ const Department = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/department`);
+      const response = await axiosInstance.get(
+        "/department"
+      );
       setLoading(false);
       const inputdata = response.data;
       if (inputdata.length > 0) {
@@ -140,8 +142,8 @@ const Department = () => {
       try {
         setOpenAddDialog(false);
         setLoading(true);
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/department`,
+        const response = await axiosInstance.post(
+          "/department",
           formData
         );
         setLoading(false);
@@ -185,8 +187,8 @@ const Department = () => {
     setOpenDeleteDialog(false); // Close the dialog
     try {
       setLoading(true);
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/department/${departmentId}`
+      const response = await axiosInstance.delete(
+        `/department/${departmentId}`
       );
       setLoading(false);
       if (response.status === 200) {

@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 import useSnackbar from "../../component/snackbar/useSnackbar";
 import AlertDialog from "../../component/alertdialog";
 
@@ -38,7 +38,9 @@ const Users = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user`);
+      const response = await axiosInstance.get(
+        "/user"
+      );
       const inputdata = response.data;
       if (inputdata.length > 0) {
         const keys = Object.keys(inputdata[0]);
@@ -121,8 +123,8 @@ const Users = () => {
     setOpenDeleteDialog(false); // Close the dialog
     try {
       setLoading(true);
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/user/${useId}`,
+      const response = await axiosInstance.delete(
+        `/user/${useId}`,
         { data: { deleteFromDevices } } // Pass the toggle state
       );
       setLoading(false);
