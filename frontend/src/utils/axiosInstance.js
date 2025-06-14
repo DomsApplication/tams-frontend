@@ -30,11 +30,6 @@ axiosInstance.interceptors.response.use(
     console.error("[Response Error]", error);
     
     // Redirect or show message if session expired
-    if (error.response?.status === 401) {
-      alert("Token Invalid (Unauthorized). Redirecting to login.");
-      Util.removeCookies();
-      window.location.href = "/";
-    }
     if (error.response?.status === 408) {
       alert("Session expired. Redirecting to login.");
       Util.removeCookies();
