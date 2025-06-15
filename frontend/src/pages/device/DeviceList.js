@@ -1,11 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PageTitle from "../../component/PageTitle";
 import DataTable from "../../component/DataTable";
-import { Box, Grid, Typography, Button } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+  CircularProgress,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 
 const page_title = {
@@ -16,69 +30,92 @@ const page_title = {
 const DeviceList = () => {
   const navigate = useNavigate();
 
-  const [pageTitle, setPageTitle] = useState(page_title); // Loading state
-
-  const [loading, setLoading] = useState(true); // Loading state
+  const [filter, setFilter] = useState("registered");
+  const [pageTitle] = useState(page_title);
+  const [loading, setLoading] = useState(true);
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
   const [props, setProps] = useState([]);
-  const [error, setError] = useState(null); // Error message
+  const [error, setError] = useState(null);
 
-  // Set columns and rows based on fetched users
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/device"
-        );
-        const inputdata = response.data;
-        if (inputdata.length > 0) {
-          const keys = Object.keys(inputdata[0]);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const url =
+        filter === "registered"
+          ? "/device/registered"
+          : "/device/unregistered";
+      const response = await axiosInstance.get(url);
+      const inputdata = response.data;
 
-          const properties = {
-            initialPageSize: 5,
-            rowsPerPageOptions: [5, 10, 20],
-            checkboxSelection: true,
-            initialSortKey: "deviceSerialNo",
-            initialSortKeyDirection: "asc", // 'asc' OR 'desc'
-            searchQuery: "",
-            searchColumns: ["deviceSerialNo", "productName", "status"],
-            index: {
-              indexField: "deviceSerialNo",
-              routerPath: "/device/",
-            },
-            initialVisibleColumns: ["deviceSerialNo", "cloudId", "productName", "terminalType", "status", "registeredOn"], // Initial columns to display
-          };
+      if (inputdata.length > 0) {
+        const keys = Object.keys(inputdata[0]);
 
-          const cols = keys.map((key) => ({
-            id: key,
-            label: key.charAt(0).toUpperCase() + key.slice(1),
-            sort: ["deviceSerialNo", "status", "registeredOn"].includes(key),
-          }));
+        const properties = {
+          initialPageSize: 5,
+          rowsPerPageOptions: [5, 10, 20],
+          checkboxSelection: true,
+          initialSortKey: "deviceSerialNo",
+          initialSortKeyDirection: "asc",
+          searchQuery: "",
+          searchColumns: ["deviceSerialNo", "productName", "status"],
+          index: {
+            indexField: "deviceSerialNo",
+            routerPath: "/device/",
+          },
+          initialVisibleColumns: [
+            "deviceSerialNo",
+            "cloudId",
+            "productName",
+            "terminalType",
+            "status",
+            "registeredOn",
+            "actions",
+          ],
+        };
 
-          let reorderedColumns = cols;
-          if (properties.index && properties.index.indexField) {
-            reorderedColumns = [
-              ...cols.filter((col) => col.id === properties.index.indexField), // Ensure indexField column is first
-              ...cols.filter((col) => col.id !== properties.index.indexField), // Add the rest of the columns
-            ];
-          }
-          setColumns(reorderedColumns);
-          setRows(inputdata);
-          setProps(properties);
-        } else {
-          setRows([]);
-          setError("No records found.");
-        }
-      } catch (err) {
-        setError("Failed to fetch data. Please try again later.");
-        console.error(err);
-      } finally {
-        setLoading(false);
+        const cols = keys.map((key) => ({
+          id: key,
+          label: key.charAt(0).toUpperCase() + key.slice(1),
+          sort: ["deviceSerialNo", "status", "registeredOn"].includes(key),
+        }));
+
+        cols.push({
+          id: "actions",
+          label: "",
+          sort: false,
+        });
+
+        const updatedData = inputdata.map((row) => ({
+          ...row,
+          actions: (
+            <RegisterActionButton
+              row={row}
+              onRegisterSuccess={fetchData}
+              filter={filter}
+            />
+          ),
+        }));
+
+        setColumns(cols);
+        setRows(updatedData);
+        setProps(properties);
+        setError(null);
+      } else {
+        setRows([]);
+        setError("No devices found for the selected filter.");
       }
-    };
+    } catch (err) {
+      setError("Failed to fetch data. Please try again later.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => {
     fetchData();
-  }, []); // Update rows and columns when users change
+  }, [fetchData]);
 
   return (
     <Box role="presentation" sx={{ p: 0 }}>
@@ -87,90 +124,146 @@ const DeviceList = () => {
       <Grid
         container
         direction="row"
-        justifyContent="center"
+        justifyContent="space-between"
         alignItems="center"
-        rowSpacing={1}
-        sx={{ pt: 1, pb: 1 }}
-        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        sx={{ px: 3, mb: 2 }}
       >
-        {/** Buttn Grid */}
-        <Grid container direction="row" alignItems="center" sx={{ ml: 3 }}>
-          {/* Left-Aligned Search Field */}
-          <Grid item xs={6} sm={6} md={6} lg={6}>
-            <Typography
-              component="h3"
-              variant="h5"
-              color="primary"
-              sx={{ pl: 1 }}
-              gutterBottom
-            >
-              {pageTitle.title}
-            </Typography>
-          </Grid>
-
-          {/* Right-Aligned Buttons and Icons */}
-          <Grid
-            item
-            xs={6} // Adjust size for the right-aligned items
-            sm={6}
-            md={6}
-            lg={6}
-            container
-            justifyContent="flex-end" // Push all items to the right
-            alignItems="center"
+        <Grid item>
+          <Typography
+            component="h3"
+            variant="h5"
+            color="primary"
+            sx={{ pl: 1 }}
+            gutterBottom
           >
+            {pageTitle.title}
+          </Typography>
+        </Grid>
+
+        <Grid item>
+          <Box display="flex" gap={2} alignItems="center">
+            <FormControl size="small" variant="outlined" sx={{ minWidth: 200 }}>
+              <InputLabel>Filter</InputLabel>
+              <Select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                label="Filter"
+              >
+                <MenuItem value="registered">Registered Devices</MenuItem>
+                <MenuItem value="unregistered">Unregistered Devices</MenuItem>
+              </Select>
+            </FormControl>
+
             <Button
-              sx={{ m: 1 }}
               variant="contained"
               color="primary"
-              size="medium"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => navigate("/users/add")}
-              display="flex"
-              justifyContent="flex-start"
-              alignItems="flex-start"
               disabled
             >
               Add
             </Button>
 
             <Button
-              sx={{ m: 1 }}
               variant="outlined"
               color="primary"
-              size="medium"
               startIcon={<DeleteIcon />}
-              onClick={() => navigate("/users/add")}
-              display="flex"
-              justifyContent="flex-start"
-              alignItems="flex-start"
               disabled
             >
               Delete
             </Button>
-          </Grid>
+          </Box>
         </Grid>
+      </Grid>
 
-        {/** Table Grid*/}
-        <Grid item xs={12}>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-            >
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Typography color="error">{error}</Typography>
-          ) : (
-            <DataTable columns={columns} rows={rows} props={props} />
-          )}
-        </Grid>
+      <Grid item xs={12} sx={{ px: 3 }}>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Box display="flex" justifyContent="center" mt={5}>
+            <Typography variant="h6" color="textSecondary">
+              {error}
+            </Typography>
+          </Box>
+        ) : (
+          <DataTable columns={columns} rows={rows} props={props} />
+        )}
       </Grid>
     </Box>
   );
 };
 
 export default DeviceList;
+
+// -----------------------
+// Register Button Component with Icon and Confirmation
+// -----------------------
+
+const RegisterActionButton = ({ row, onRegisterSuccess, filter }) => {
+  const [loading, setLoading] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleConfirmOpen = () => {
+    setOpenConfirm(true);
+  };
+
+  const handleConfirmClose = () => {
+    setOpenConfirm(false);
+  };
+
+  const handleRegister = async () => {
+    try {
+      setLoading(true);
+      await axiosInstance.post("/device/register", {
+        deviceSerialNo: row.deviceSerialNo,
+      });
+      onRegisterSuccess(); // Refresh based on current filter
+    } catch (error) {
+      console.error("Device registration failed", error);
+    } finally {
+      setLoading(false);
+      handleConfirmClose();
+    }
+  };
+
+  if (filter === "registered") {
+    return (
+      <Typography variant="body2" color="success.main">
+        ✔ Registered
+      </Typography>
+    );
+  }
+
+  return (
+    <>
+      <IconButton
+        color="primary"
+        onClick={handleConfirmOpen}
+        disabled={loading}
+        title="Register device"
+      >
+        <HowToRegIcon />
+      </IconButton>
+
+      <Dialog open={openConfirm} onClose={handleConfirmClose}>
+        <DialogTitle>
+          Confirm registration for device <strong>{row.deviceSerialNo}</strong>?
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleConfirmClose} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleRegister}
+            color="primary"
+            variant="contained"
+            disabled={loading}
+          >
+            {loading ? "Registering..." : "Confirm"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
